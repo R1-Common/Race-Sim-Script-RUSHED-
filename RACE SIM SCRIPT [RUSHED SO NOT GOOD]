@@ -1,0 +1,89 @@
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+local Window = Rayfield:CreateWindow({
+   Name = "Race Simulator",
+   LoadingTitle = "PJEX",
+   LoadingSubtitle = "by PJEX",
+   ConfigurationSaving = {
+      Enabled = true,
+      FolderName = nil, -- Create a custom folder for your hub/game
+      FileName = "PJEXRACESIMHACKTHING"
+   },
+   Discord = {
+      Enabled = false,
+      Invite = "noinvitelink", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ABCD would be ABCD
+      RememberJoins = true -- Set this to false to make them join the discord every time they load it up
+   },
+   KeySystem = false, -- Set this to true to use our key system
+   KeySettings = {
+      Title = "Untitled",
+      Subtitle = "Key System",
+      Note = "No method of obtaining the key is provided",
+      FileName = "Key", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
+      SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
+      GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
+      Key = {"Hello"} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
+   }
+})
+
+local MainTab = Window:CreateTab("Main", nil) -- Title, Image
+local MainSection = MainTab:CreateSection("Main")
+
+local Slider = MainTab:CreateSlider({
+   Name = "WalkSpeed",
+   Range = {16, 9000000000},
+   Increment = 1,
+   Suffix = "WalkSpeed",
+   CurrentValue = 10,
+   Flag = "Slider1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(v)
+   -- Get the player's character
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+
+-- Store the original walkspeed
+local originalWalkspeed = character.Humanoid.WalkSpeed
+
+-- Check and adjust the player's walkspeed continuously
+while true do
+    local currentWalkspeed = character.Humanoid.WalkSpeed
+    
+    -- Modify the walkspeed as desired
+    -- You can replace the 'v' in the following line with any desired value or formula
+    local modifiedWalkspeed = v
+
+    if currentWalkspeed < modifiedWalkspeed then
+        character.Humanoid.WalkSpeed = modifiedWalkspeed
+    elseif currentWalkspeed > modifiedWalkspeed then
+        character.Humanoid.WalkSpeed = originalWalkspeed
+    end
+
+    wait(0.1) -- Adjust the frequency of checks if needed
+end
+   end,
+})
+
+local Button = MainTab:CreateButton({
+   Name = "GETSPEED",
+   Callback = function()
+   local b = true -- Initial value of the callback
+
+local args = {
+    [1] = "Village",
+    [2] = b
+}
+
+local stopScript = false -- Variable to control the script execution
+
+while not stopScript do
+    game:GetService("ReplicatedStorage"):WaitForChild("events-shared/network@GlobalEvents"):WaitForChild("requestSpeed"):FireServer(unpack(args))
+    wait(1) -- Adjust the delay between each execution if needed
+    
+    -- Check if the script should stop based on a new callback value
+    -- Replace "NewCallbackValue" with the actual callback value you want to use
+    if NewCallbackValue then
+        stopScript = true
+    end
+end
+   end,
+})
